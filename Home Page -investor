@@ -1,0 +1,67 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import java.util.List;
+
+public class InvestorBaseTestScript {
+    public static void main(String[] args) {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+
+        WebDriver driver = new ChromeDriver();
+
+        driver.get("https://www.investorbase.com");
+
+        WebElement logo = driver.findElement(By.id("mainLogo"));
+        assertElementIsDisplayed(logo, "Main Logo");
+
+        WebElement aboutUsLink = driver.findElement(By.linkText("About Us"));
+        aboutUsLink.click();
+        assertPageTitle("About Us - Investor Base");
+
+        WebElement loginButton = driver.findElement(By.id("loginButton"));
+        loginButton.click();
+        assertPageTitle("Login - Investor Base");
+        WebElement searchBox = driver.findElement(By.id("searchInput"));
+        searchBox.sendKeys("investment opportunities");
+        searchBox.submit();
+        List<WebElement> searchResults = driver.findElements(By.className("search-result"));
+        assertElementListNotEmpty(searchResults, "Search Results");
+
+        List<WebElement> footerLinks = driver.findElements(By.cssSelector(".footer a"));
+        for (WebElement link : footerLinks) {
+            link.click();
+            assertPageLoadSuccess();
+        }
+        driver.quit();
+    }
+
+    private static void assertElementIsDisplayed(WebElement element, String elementName) {
+        if (element.isDisplayed()) {
+            System.out.println(elementName + " is displayed.");
+        } else {
+            System.err.println(elementName + " is not displayed.");
+        }
+    }
+
+    private static void assertPageTitle(String expectedTitle) {
+        String actualTitle = driver.getTitle();
+        if (actualTitle.equals(expectedTitle)) {
+            System.out.println("Page title is correct: " + expectedTitle);
+        } else {
+            System.err.println("Page title is incorrect. Expected: " + expectedTitle + ", Actual: " + actualTitle);
+        }
+    }
+
+    private static void assertElementListNotEmpty(List<WebElement> elements, String elementListName) {
+        if (!elements.isEmpty()) {
+            System.out.println(elementListName + " is not empty.");
+        } else {
+            System.err.println(elementListName + " is empty.");
+        }
+    }
+
+    private static void assertPageLoadSuccess() {
+
+    }
+}
